@@ -1,0 +1,12 @@
+D:\Internship\HomeTask2\DataLayer\obj\Debug\net6.0\DataLayer.csproj.AssemblyReference.cache
+D:\Internship\HomeTask2\DataLayer\obj\Debug\net6.0\DataLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\Internship\HomeTask2\DataLayer\obj\Debug\net6.0\DataLayer.AssemblyInfoInputs.cache
+D:\Internship\HomeTask2\DataLayer\obj\Debug\net6.0\DataLayer.AssemblyInfo.cs
+D:\Internship\HomeTask2\DataLayer\obj\Debug\net6.0\DataLayer.csproj.CoreCompileInputs.cache
+D:\Internship\HomeTask2\DataLayer\bin\Debug\net6.0\DataLayer.deps.json
+D:\Internship\HomeTask2\DataLayer\bin\Debug\net6.0\DataLayer.dll
+D:\Internship\HomeTask2\DataLayer\bin\Debug\net6.0\DataLayer.pdb
+D:\Internship\HomeTask2\DataLayer\obj\Debug\net6.0\DataLayer.dll
+D:\Internship\HomeTask2\DataLayer\obj\Debug\net6.0\refint\DataLayer.dll
+D:\Internship\HomeTask2\DataLayer\obj\Debug\net6.0\DataLayer.pdb
+D:\Internship\HomeTask2\DataLayer\obj\Debug\net6.0\ref\DataLayer.dll
