@@ -1,11 +1,8 @@
-﻿using AutoMapper;
-using DataLayer.Context;
+﻿using DataLayer.Dtos;
 using DataLayer.Models;
 using DataLayer.Repository;
 using HomeTask2.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
 
 namespace HomeTask2.Controllers
 {
@@ -28,29 +25,23 @@ namespace HomeTask2.Controllers
         {
             var data = BookRepository.All;
             var ratings = RatingRepository.All;
-            var reviews = RatingRepository.All.Count();
+            var reviews = RatingRepository.All;
             List<GetBooksResponse> books = new List<GetBooksResponse>();
             foreach (var item in data)
             {
                 var r = ratings.Where(x => (x.BookId == item.Id)).ToList();
                 var rate = r.Select(x =>
-                        x.Score).Sum() / ratings.Count();
+                        x.Score).Sum() / r.Count();
+                var countReviews = reviews.Where(x => x.BookId == item.Id).Count();
                 books.Add(new GetBooksResponse
                 {
                     Id = item.Id,
                     Title = item.Title,
                     Author = item.Author,
                     Rating = rate,
-                    ReviewsNumber = reviews
+                    ReviewsNumber = countReviews
                 }); ;
             }
-            #region
-            // Настройка конфигурации AutoMapper
-            //var config = new MapperConfiguration(cfg => 
-            //    cfg.CreateMap<GetBooksResponse, Book>()
-            //    .ForMember("Ratings", opt => opt.MapFrom(src => src.)));
-            //var mapper = new Mapper(config);
-            #endregion
 
             List<GetBooksResponse> res = new List<GetBooksResponse>();
             if (order == "author")
@@ -64,17 +55,27 @@ namespace HomeTask2.Controllers
             return res;
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Book>> GetBook(int id)
-        //{
-        //    var book = await db.Books.FindAsync(id);
-
-        //    if (book == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return book;
-        //}
+        [HttpGet("{id:int}")]
+        public BookDetailsResponse GetBookDetails(int id)
+        {
+            var data = BookRepository.FindById(id);
+            var ratings = RatingRepository.All.Where(x => (x.BookId == data.Id)).ToList();
+            var rate = ratings.Select(x =>
+                        x.Score).Sum() / ratings.Count();
+            var reviews = ReviewRepository.All.Where(x => (x.BookId == data.Id))
+                .Select(x => new ReviewDto { Id = x.Id, Message = x.Message, Reviewer = x.Reviewer }).ToList();
+            
+            BookDetailsResponse book = new BookDetailsResponse
+            {
+                Id = data.Id,
+                Title = data.Title,
+                Author = data.Author,
+                Cover = data.Cover,
+                Content = data.Content,
+                Rating = rate,
+                Reviews = reviews
+             };
+            return book;
+        }
     }
 }
