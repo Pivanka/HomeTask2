@@ -12,8 +12,8 @@ namespace DataLayer.Context
         public DbSet<Rating> Ratings { get; set; }
         public BookstoreContext()
         {
-            this.Database.EnsureDeleted();
-            this.Database.EnsureCreated();
+            Database.EnsureDeleted();
+            Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionalBiulder)
         {
@@ -21,7 +21,8 @@ namespace DataLayer.Context
             {
                 ["Server"] = "DESKTOP-P7QOF3N",
                 ["DataBase"] = "ExampleDb",
-                ["Trusted_Connection"] = true
+                ["Trusted_Connection"] = true,
+                ["Encrypt"] = false
             };
 
             Console.WriteLine(connectionStringBuilder.ConnectionString);
