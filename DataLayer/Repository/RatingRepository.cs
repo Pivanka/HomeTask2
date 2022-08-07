@@ -1,12 +1,13 @@
 ﻿using DataLayer.Context;
 using DataLayer.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataLayer.Repository
 {
     public class RatingRepository : IRepository<Rating>
     {
         private readonly BookstoreContext db;
-        public IEnumerable<Rating> All => db.Ratings.ToList();
+        public async Task<IEnumerable<Rating>> GetAllAsync() => await db.Ratings.ToListAsync();
 
         public RatingRepository()
         {
@@ -28,9 +29,9 @@ namespace DataLayer.Repository
             db.Ratings.Update(rating);
         }
 
-        public Rating FindById(int id)
+        public async Task<Rating> FindByIdAsync(int id)
         {
-            return db.Ratings.FirstOrDefault(e => e.Id == id);
+            return await db.Ratings.FirstOrDefaultAsync(e => e.Id == id);
         }
         public void Save()
         {

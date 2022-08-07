@@ -3,11 +3,11 @@ namespace DataLayer.Repository
 {
     public interface IRepository<IEntity> where IEntity : class
     {
-        IEnumerable<IEntity> All { get; }
+        Task<IEnumerable<IEntity>> GetAllAsync();
         void Add(IEntity entity);
         void Update(IEntity entity);
         void Delete(IEntity entity);
-        IEntity FindById(int id);
+        Task<IEntity> FindByIdAsync(int id);
         void Save();
     }
 }

@@ -1,5 +1,4 @@
-﻿using DataLayer.Models;
-
+﻿
 namespace DataLayer.Dtos
 {
     public class BookDetailsResponse

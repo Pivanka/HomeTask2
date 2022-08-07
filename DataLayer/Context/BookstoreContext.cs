@@ -20,7 +20,7 @@ namespace DataLayer.Context
             var connectionStringBuilder = new SqlConnectionStringBuilder
             {
                 ["Server"] = "DESKTOP-P7QOF3N",
-                ["DataBase"] = "ExampleDb",
+                ["DataBase"] = "Bookstore",
                 ["Trusted_Connection"] = true,
                 ["Encrypt"] = false
             };
