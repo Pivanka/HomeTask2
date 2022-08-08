@@ -16,26 +16,17 @@ namespace HomeTask2.Controllers
         private readonly IRepository<Rating> RatingRepository;
         private readonly IRepository<Review> ReviewRepository;
         private readonly IOptions<WebApiOptions> _webApiOptions;
-        //private readonly AbstractValidator<Rating> _validations;
         public BooksController(
             IRepository<Book> bookRepository,
             IRepository<Rating> ratingRepository,
             IRepository<Review> reviewRepository,
-            IOptions<WebApiOptions> webApiOptions
-            /*AbstractValidator<Rating> validations*/)
+            IOptions<WebApiOptions> webApiOptions)
         {
             BookRepository = bookRepository;
             RatingRepository = ratingRepository;
             ReviewRepository = reviewRepository;
             _webApiOptions = webApiOptions;
-            //_validations = validations;
         }
-
-        //[HttpGet]
-        //public IActionResult Get()
-        //{
-        //    return Content($"My Account Ivanka is {_webApiOptions.Value.ApiKey}");
-        //}
 
         [HttpGet]
         public async Task<IActionResult> GetBooks(string? order)
@@ -127,7 +118,7 @@ namespace HomeTask2.Controllers
             try
             {
                 var data = await BookRepository.GetAllAsync();
-                if (book != null)
+                if (book != null && ModelState.IsValid)
                 {
                     var res = data.Where(x => x.Id == book.Id).ToList();
                     if (res.Count == 0)
@@ -183,7 +174,7 @@ namespace HomeTask2.Controllers
         {
             try
             {
-                if (review != null)
+                if (review != null && ModelState.IsValid)
                 {
                     Review result = new Review
                     {
@@ -209,7 +200,7 @@ namespace HomeTask2.Controllers
         {
             try
             {
-                if (rate != null)
+                if (rate != null && ModelState.IsValid)
                 {
                     Rating result = new Rating
                     {

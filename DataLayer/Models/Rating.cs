@@ -8,6 +8,7 @@ namespace DataLayer.Models
         public int Id { get; set; }
         public int BookId { get; set; }
         public Book Book { get; set; }
+        [Range(1, 5)]
         public decimal Score { get; set; }
     }
 }
