@@ -14,19 +14,39 @@ namespace DataLayer.Repository
             db = new BookstoreContext();
         }
 
-        public void Add(Review review)
+        public async Task<Review> Add(Review review)
         {
-            db.Reviews.Add(review);
+            var result = await db.Reviews.AddAsync(review);
+            await db.SaveChangesAsync();
+            return result.Entity;
         }
 
-        public void Delete(Review review)
+        public async Task<Review> Delete(Review review)
         {
-            db.Reviews.Remove(review);
+            var result = await FindByIdAsync(review.Id);
+            if (result != null)
+            {
+                db.Reviews.Remove(review);
+                await db.SaveChangesAsync();
+                return result;
+            }
+            return null;
         }
-
-        public void Update(Review review)
+        public async Task<Review> Update(Review review)
         {
-            db.Reviews.Update(review);
+            var result = await db.Reviews
+            .FirstOrDefaultAsync(e => e.Id == review.Id);
+
+            if (result != null)
+            {
+                result.Reviewer = review.Reviewer;
+                result.Message = review.Message;
+                result.BookId = review.BookId;
+                db.Reviews.Update(result);
+                await db.SaveChangesAsync();
+                return result;
+            }
+            return null;
         }
 
         public async Task<Review> FindByIdAsync(int id)

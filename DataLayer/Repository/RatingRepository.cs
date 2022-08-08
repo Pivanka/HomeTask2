@@ -14,19 +14,39 @@ namespace DataLayer.Repository
             db = new BookstoreContext();
         }
 
-        public void Add(Rating rating)
+        public async Task<Rating> Add(Rating rating)
         {
-            db.Ratings.Add(rating);
+            var result = await db.Ratings.AddAsync(rating);
+            await db.SaveChangesAsync();
+            return result.Entity;
         }
 
-        public void Delete(Rating rating)
+        public async Task<Rating> Delete(Rating rating)
         {
-            db.Ratings.Remove(rating);
+            var result = await FindByIdAsync(rating.Id);
+            if (result != null)
+            {
+                db.Ratings.Remove(rating);
+                await db.SaveChangesAsync();
+                return result;
+            }
+            return null;
         }
 
-        public void Update(Rating rating)
+        public async Task<Rating> Update(Rating rating)
         {
-            db.Ratings.Update(rating);
+            var result = await db.Ratings
+            .FirstOrDefaultAsync(e => e.Id == rating.Id);
+
+            if (result != null)
+            {
+                result.Score = rating.Score;
+                result.BookId = rating.BookId;
+                db.Ratings.Update(result);
+                await db.SaveChangesAsync();
+                return result;
+            }
+            return null;
         }
 
         public async Task<Rating> FindByIdAsync(int id)

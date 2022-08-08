@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "8InGAx3NF1/JFHPJQ4GoyGLn/VpM+oBHBna0EANg9PsLoUIsvZZCdXbBU71RxOLQbxidxuNfaBM/JvTg/TSFSQ==",
+  "dgSpecHash": "lxAufhOOipsL2IP3VycVydqC47Ml8Jmuk92CMg2DdV3ObQq77nEAxw9sLS8G8koNDHinKQlw0gdcSPfmYsCygQ==",
   "success": true,
   "projectFilePath": "D:\\Internship\\HomeTask2\\DataLayer\\DataLayer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ivank\\.nuget\\packages\\azure.core\\1.6.0\\azure.core.1.6.0.nupkg.sha512",
     "C:\\Users\\ivank\\.nuget\\packages\\azure.identity\\1.3.0\\azure.identity.1.3.0.nupkg.sha512",
+    "C:\\Users\\ivank\\.nuget\\packages\\fluentvalidation\\11.1.1\\fluentvalidation.11.1.1.nupkg.sha512",
     "C:\\Users\\ivank\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.0.0\\microsoft.bcl.asyncinterfaces.1.0.0.nupkg.sha512",
     "C:\\Users\\ivank\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
     "C:\\Users\\ivank\\.nuget\\packages\\microsoft.data.sqlclient\\4.1.0\\microsoft.data.sqlclient.4.1.0.nupkg.sha512",

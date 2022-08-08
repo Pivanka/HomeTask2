@@ -63,3 +63,9 @@ D:\Internship\HomeTask2\HomeTask2\bin\Debug\net6.0\System.Net.Http.Formatting.dl
 D:\Internship\HomeTask2\HomeTask2\bin\Debug\net6.0\System.Web.Http.dll
 D:\Internship\HomeTask2\HomeTask2\bin\Debug\net6.0\Newtonsoft.Json.dll
 D:\Internship\HomeTask2\HomeTask2\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
+D:\Internship\HomeTask2\HomeTask2\bin\Debug\net6.0\Microsoft.OpenApi.dll
+D:\Internship\HomeTask2\HomeTask2\bin\Debug\net6.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Internship\HomeTask2\HomeTask2\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Internship\HomeTask2\HomeTask2\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Internship\HomeTask2\HomeTask2\obj\Debug\net6.0\HomeTask2.MvcApplicationPartsAssemblyInfo.cs
+D:\Internship\HomeTask2\HomeTask2\bin\Debug\net6.0\FluentValidation.dll

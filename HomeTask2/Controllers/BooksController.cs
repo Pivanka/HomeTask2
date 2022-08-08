@@ -1,6 +1,7 @@
 ﻿using DataLayer.Dtos;
 using DataLayer.Models;
 using DataLayer.Repository;
+using FluentValidation;
 using HomeTask2.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -15,16 +16,19 @@ namespace HomeTask2.Controllers
         private readonly IRepository<Rating> RatingRepository;
         private readonly IRepository<Review> ReviewRepository;
         private readonly IOptions<WebApiOptions> _webApiOptions;
+        //private readonly AbstractValidator<Rating> _validations;
         public BooksController(
             IRepository<Book> bookRepository,
             IRepository<Rating> ratingRepository,
             IRepository<Review> reviewRepository,
-            IOptions<WebApiOptions> webApiOptions)
+            IOptions<WebApiOptions> webApiOptions
+            /*AbstractValidator<Rating> validations*/)
         {
             BookRepository = bookRepository;
             RatingRepository = ratingRepository;
             ReviewRepository = reviewRepository;
             _webApiOptions = webApiOptions;
+            //_validations = validations;
         }
 
         //[HttpGet]
@@ -34,7 +38,7 @@ namespace HomeTask2.Controllers
         //}
 
         [HttpGet]
-        public async Task<IActionResult> GetBooks(string order)
+        public async Task<IActionResult> GetBooks(string? order)
         {
             try
             {
@@ -71,60 +75,157 @@ namespace HomeTask2.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return BadRequest();
             }
         }
 
-        //[HttpGet("{id:int}")]
-        //public BookDetailsResponse GetBookDetails(int id)
-        //{
-        //    var data = BookRepository.FindById(id);
-        //    var ratings = RatingRepository.All.Where(x => (x.BookId == data.Id)).ToList();
-        //    var rate = ratings.Select(x =>
-        //                x.Score).Sum() / ratings.Count();
-        //    var reviews = ReviewRepository.All.Where(x => (x.BookId == data.Id))
-        //        .Select(x => new ReviewDto { Id = x.Id, Message = x.Message, Reviewer = x.Reviewer }).ToList();
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetBookDetails(int id)
+        {
+            try
+            {
+                var data = await BookRepository.FindByIdAsync(id);
+                var ratings = await RatingRepository.GetAllAsync();
+                var reviews = await ReviewRepository.GetAllAsync();
 
-        //    BookDetailsResponse book = new BookDetailsResponse
-        //    {
-        //        Id = data.Id,
-        //        Title = data.Title,
-        //        Author = data.Author,
-        //        Cover = data.Cover,
-        //        Content = data.Content,
-        //        Rating = rate,
-        //        Reviews = reviews
-        //    };
-        //    return book;
-        //}
+                if (data == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    ratings = ratings.Where(x => (x.BookId == data.Id)).ToList();
+                    var rate = ratings.Select(x =>
+                                x.Score).Sum() / ratings.Count();
 
-        ////[HttpDelete]//("{id:int}/{secret}")
-        //[HttpDelete] //Todo
-        //public int DeleteBook( int id, string secret)
-        //{
-        //    if(secret == _webApiOptions.Value.ApiKey)
-        //    {
-        //        try
-        //        {
-        //            var bookToDelete = BookRepository.FindById(id);
+                    reviews = reviews.Where(x => (x.BookId == data.Id));
+                    var reviewsRes = reviews.Select(x => new ReviewDto { Id = x.Id, Message = x.Message, Reviewer = x.Reviewer }).ToList();
 
-        //            if (bookToDelete == null)
-        //            {
-        //                throw new Exception($"Book with Id = {id} not found");
-        //            }
-        //            BookRepository.Delete(bookToDelete); // BookRepository method delete need retuen id
-        //        }
-        //        catch (Exception)
-        //        {
-        //            Console.WriteLine(StatusCode(StatusCodes.Status500InternalServerError,
-        //                "Error deleting data"));
-        //        }
-        //        return 1;
-        //    }
-        //    else
-        //    {
-        //        return 0;
-        //    }
-        //}
+                    BookDetailsResponse book = new BookDetailsResponse
+                    {
+                        Id = data.Id,
+                        Title = data.Title,
+                        Author = data.Author,
+                        Cover = data.Cover,
+                        Content = data.Content,
+                        Rating = rate,
+                        Reviews = reviewsRes
+                    };
+                    return Ok(book);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        //POST https://{{baseUrl}}/api/books/save
+        [HttpPost("save")]
+        public async Task<IActionResult> SaveBook([FromBody] Book book)
+        {
+            try
+            {
+                var data = await BookRepository.GetAllAsync();
+                if (book != null)
+                {
+                    var res = data.Where(x => x.Id == book.Id).ToList();
+                    if (res.Count == 0)
+                    {
+                        await BookRepository.Add(book);
+                    }
+                    else
+                    {
+                        await BookRepository.Update(book);
+                    }
+                    return Ok(book.Id);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        //[HttpDelete]//("{id:int}/{secret}")
+        [HttpDelete("{id:int}")] //Todo!
+        public async Task<ActionResult<Book>> DeleteBook([FromRoute] int id, [FromQuery] string secret)
+        {
+            try
+            {
+                if (secret == _webApiOptions.Value.ApiKey)
+                {
+                    var bookToDelete = await BookRepository.FindByIdAsync(id);
+                    if (bookToDelete == null)
+                    {
+                        return NotFound();
+                    }
+                    var deleted = await BookRepository.Delete(bookToDelete);
+                    return Ok(deleted.Id);
+                }
+                else
+                    return NotFound("Secret key is not correct");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+                //StatusCode(500, "Internal server error");
+            }
+        }
+
+        //PUT https:{{baseUrl}}/api/books/{id}/review
+        [HttpPut("{id}/review")]
+        public async Task<IActionResult> Review(int id, [FromBody] ReviewDto review)
+        {
+            try
+            {
+                if (review != null)
+                {
+                    Review result = new Review
+                    {
+                        Message = review.Message,
+                        Reviewer = review.Reviewer,
+                        BookId = id
+                    };
+                    await ReviewRepository.Add(result);
+                    return Ok(result.Id);
+                }
+                else
+                    return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        //PUT https:{{baseUrl}}/api/books/{id}/rate
+        [HttpPut("{id}/rate")]
+        public async Task<IActionResult> Rate(int id, [FromBody] RatingDto rate)
+        {
+            try
+            {
+                if (rate != null)
+                {
+                    Rating result = new Rating
+                    {
+                        Score = rate.Score,
+                        BookId = id
+                    };
+                    await RatingRepository.Add(result);
+                    return Ok(result.Id);
+                }
+                else
+                    return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

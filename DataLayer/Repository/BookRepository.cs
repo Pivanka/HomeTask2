@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataLayer.Repository
 {
-    public class BookRepository : IRepository<Book>
+    public class BookRepository : IRepository<Book> //SaveChanges!
     {
         private readonly BookstoreContext db;
 
@@ -15,28 +15,47 @@ namespace DataLayer.Repository
             db = new BookstoreContext();
         }
 
-        public void Add(Book book)
+        public async Task<Book> Add(Book book)
         {
-            db.Books.Add(book);
+            var result = await db.Books.AddAsync(book);
+            await db.SaveChangesAsync();
+            return result.Entity;
         }
 
-        public void Delete(Book book)
+        public async Task<Book> Delete(Book book)
         {
-            db.Books.Remove(book);
+            var result = await FindByIdAsync(book.Id);
+            if (result != null)
+            {
+                db.Books.Remove(book);
+                await db.SaveChangesAsync();
+                return result;
+            }
+            return null;
         }
 
-        public void Update(Book book)
+        public async Task<Book> Update(Book book)
         {
-            db.Books.Update(book);
+            var result = await db.Books
+            .FirstOrDefaultAsync(e => e.Id == book.Id);
+
+            if (result != null)
+            {
+                result.Author = book.Author;
+                result.Cover = book.Cover;
+                result.Content = book.Content;
+                result.Genre = book.Genre;
+                result.Title = book.Title;
+                db.Books.Update(result);
+                await db.SaveChangesAsync();
+                return result;
+            }
+            return null;
         }
 
         public async Task<Book> FindByIdAsync(int id)
         {
             return await db.Books.FirstOrDefaultAsync(e => e.Id == id);
-        }
-        public void Save()
-        {
-            db.SaveChanges();
         }
     }
 }

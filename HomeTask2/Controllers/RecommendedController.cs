@@ -22,36 +22,46 @@ namespace HomeTask2.Controllers
             ReviewRepository = reviewRepository;
         }
 
-        //[HttpGet]
-        //public IEnumerable<GetBooksResponse> GetTopBooks(string? filter)
-        //{
-        //    var data = BookRepository.All;
-        //    if (filter != null)
-        //    {
-        //        data = data.Where(x => (x.Genre == filter)).ToList();
-        //    }
-        //    var ratings = RatingRepository.All;
-        //    var reviews = ReviewRepository.All;
-        //    List<GetBooksResponse> books = new List<GetBooksResponse>();
-        //    foreach (var item in data)
-        //    {
-        //        var r = ratings.Where(x => (x.BookId == item.Id)).ToList();
-        //        var rate = r.Select(x =>
-        //                x.Score).Sum() / r.Count();
-        //        var countReviews = reviews.Where(x => x.BookId == item.Id).Count();
-        //        books.Add(new GetBooksResponse
-        //        {
-        //            Id = item.Id,
-        //            Title = item.Title,
-        //            Author = item.Author,
-        //            Rating = rate,
-        //            ReviewsNumber = countReviews
-        //        }); ;
-        //    }
+        [HttpGet]
+        public async Task<IActionResult> GetTopBooks(string? filter)
+        {
+            try
+            {
+                var data = await BookRepository.GetAllAsync();
+                if (filter != null)
+                {
+                    data = data.Where(x => (x.Genre == filter)).ToList();
+                }
 
-        //    books = books.Where(x => x.ReviewsNumber > 0).OrderByDescending(x => x.Rating).ToList(); //Must be 10!
-        //    books = books.Take(10).ToList();
-        //    return books;
-        //}
+                var ratings = await RatingRepository.GetAllAsync();
+                var reviews = await ReviewRepository.GetAllAsync();
+
+                List<GetBooksResponse> books = new List<GetBooksResponse>();
+                foreach (var item in data)
+                {
+                    var r = ratings.Where(x => (x.BookId == item.Id)).ToList();
+                    var rate = r.Select(x =>
+                            x.Score).Sum() / r.Count();
+                    var countReviews = reviews.Where(x => x.BookId == item.Id).Count();
+                    books.Add(new GetBooksResponse
+                    {
+                        Id = item.Id,
+                        Title = item.Title,
+                        Author = item.Author,
+                        Rating = rate,
+                        ReviewsNumber = countReviews
+                    }); ;
+                }
+
+                books = books.Where(x => x.ReviewsNumber >= 10).OrderByDescending(x => x.Rating).ToList();
+                books = books.Take(10).ToList();
+
+                return Ok(books);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }
